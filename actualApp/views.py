@@ -5,6 +5,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 from datetime import datetime, timedelta
 import dateutil.parser as dt
+from integration_utils.bitrix24.models.bitrix_user_token import BitrixUserToken
 
 AUTH_TOKEN = '1/grvg18g56ktzh1im'
 DOMAIN = 'mybitrixbtw.bitrix24.ru'
@@ -12,6 +13,7 @@ DOMAIN = 'mybitrixbtw.bitrix24.ru'
 task_id = 0
 
 
+# @main_auth(on_start=True, set_cookie=True)
 @main_auth(on_start=True, set_cookie=True)
 def start(request):
     global task_id
@@ -22,7 +24,7 @@ def start(request):
     return render(request, 'start.html')
 
 
-@ensure_csrf_cookie
+@main_auth(on_cookies=True)
 def kick_task(request):
     if request.method == "POST":
         but = BitrixToken(domain=DOMAIN, web_hook_auth=AUTH_TOKEN)
@@ -39,6 +41,4 @@ def kick_task(request):
                                                       "DEADLINE": str(reformat)
                                                   }
                                                   })
-        # insert_app = but.call_api_method('placement.bind',
-        # {'PLACEMENT': 'TASK_VIEW_SIDEBAR', 'HANDLER': 'https://ca53-35-221-131-132.ngrok-free.app'})
     return render(request, 'start.html')
