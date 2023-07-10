@@ -4,5 +4,7 @@ media/
 local_settings.py
 .venv/
 .venv
+.idea
 venv/
 db.sqlite3
+__pycache__
